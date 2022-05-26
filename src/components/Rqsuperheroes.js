@@ -1,19 +1,22 @@
-import React from 'react'
-import { useQuery } from 'react-query'
-import axios from 'axios'
+import { useSupperHeroesData } from '../hooks/useSuperHeroesData'
+import RepeatRQsuperheroes from './RepeatRQsuperheroes'
 
-const fetchSuperHeroes = () => {
-  return axios.get('http://localhost:5000/superheroes')
+const onSuccess = (data) => {
+  console.log('performs side effcts after success of fetching data', data)
+}
+
+const onError = (error) => {
+  console.log('performs side effcts after error of fetching data', error)
 }
 
 const Rqsuperheroes = () => {
-  const { isLoading, data, isError, error, isFetching } = useQuery(
-    'super-heroees',
-    fetchSuperHeroes
-  )
+  //isFetching ley background refetch garcha
+  const { isLoading, data, isError, error, isFetching, refetch } =
+    useSupperHeroesData(onSuccess, onError)
+
   console.log('isLoading :', isLoading, 'isFetching :', isFetching)
 
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <h2>Loading...</h2>
   }
 
@@ -23,9 +26,17 @@ const Rqsuperheroes = () => {
 
   return (
     <div>
-      {data?.data.map((item) => {
+      <button onClick={refetch}>click</button>
+      {/* {data?.data.map((item) => {
         return <div key={item.name}>{item.name}</div>
+      })} */}
+      {data?.map((item) => {
+        return <div key={item}>{item}</div>
       })}
+
+      <br />
+      <br />
+      {/* <RepeatRQsuperheroes /> */}
     </div>
   )
 }
